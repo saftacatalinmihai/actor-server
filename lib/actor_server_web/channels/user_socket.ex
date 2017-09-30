@@ -2,7 +2,7 @@ defmodule ActorServerWeb.UserSocket do
   use Phoenix.Socket
 
   ## Channels
-  # channel "room:*", ActorServerWeb.RoomChannel
+  channel "room:*", ActorServerWeb.RoomChannel
 
   ## Transports
   transport :websocket, Phoenix.Transports.WebSocket

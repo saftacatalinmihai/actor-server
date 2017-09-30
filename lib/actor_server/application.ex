@@ -14,6 +14,8 @@ defmodule ActorServer.Application do
       supervisor(ActorServerWeb.Endpoint, []),
       # Start your own worker by calling: ActorServer.Worker.start_link(arg1, arg2, arg3)
       # worker(ActorServer.Worker, [arg1, arg2, arg3]),
+      worker(CodeServer, []),
+      worker(EventStore, [])
     ]
 
     # See https://hexdocs.pm/elixir/Supervisor.html
