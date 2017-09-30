@@ -1,0 +1,15 @@
+version: "3"
+services:
+  actor-server:
+    build: .
+    command: bash -c "npm install; mix deps.unlock --all; mix deps.update --all; mix ecto.create; mix phx.server"
+    volumes:
+      - ./:/code
+    ports:
+      - "4002:4000"
+    depends_on:
+      - db
+    links:
+      - db
+  db:
+    image: postgres
