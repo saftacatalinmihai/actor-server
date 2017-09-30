@@ -9,9 +9,9 @@ defmodule ActorServerWeb.RoomChannel do
     def event_pusher(socket) do
       receive do
         ev ->
-          # IO.puts "<Ev>"
-          # IO.inspect ev
-          # IO.puts "<Ev/>"
+           IO.puts "<Ev>"
+           IO.inspect ev
+           IO.puts "<Ev/>"
           # TODO: fix to string for PIDS in events back to client
 # ** (Protocol.UndefinedError) protocol String.Chars not implemented for #PID<0.612.0>
 # backend_1   |     (elixir) lib/string/chars.ex:3: String.Chars.impl_for!/1
