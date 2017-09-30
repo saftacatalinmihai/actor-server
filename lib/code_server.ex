@@ -44,7 +44,6 @@ defmodule CodeServer do
     case :"Elixir.#{actor_type}".start_link do
       {:ok, pid} ->
         IO.inspect pid
-        IO.inspect :erlang.trace(pid, true, [:send, :receive, :exiting, :timestamp, {:tracer, EventStore.get_pid()}])
         {:reply, {:ok, %{:name => actor_type, :pid => to_string(:erlang.pid_to_list(pid))}}, state}
       _ ->
         {:reply, {:error, %{:reason => "Unable to start actor type: #{actor_type}"}}, state}

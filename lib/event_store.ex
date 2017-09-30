@@ -18,6 +18,10 @@ defmodule EventStore do
     GenServer.call(__MODULE__, {:register_watcher, pid})
   end
 
+  def new_event(ev) do
+    GenServer.call(__MODULE__, {:new_event, ev})
+  end
+
   def init(:ok) do
     {:ok, %{:proc_events => [], :watchers => []}}
   end
@@ -32,6 +36,11 @@ defmodule EventStore do
 
   def handle_call(:get_pid, _from, state) do
     {:reply, self(), state}
+  end
+
+  def handle_call({:new_event, event}, _from, %{:proc_events => ev_list, :watchers => watchers}) do
+    Enum.each(watchers, fn w -> send(w, event) end)
+    {:reply, :ok, %{:proc_events => [event | ev_list], :watchers => watchers}}
   end
 
   def handle_info(event, %{:proc_events => ev_list, :watchers => watchers}) do
