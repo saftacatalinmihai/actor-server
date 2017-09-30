@@ -18,4 +18,9 @@ import "phoenix_html"
 // Local files can be imported directly using relative
 // paths "./socket" or full ones "web/static/js/socket".
 
-// import socket from "./socket"
+import channel from "./socket"
+
+console.log(channel)
+channel.push("get_actors")
+    .receive("ok", resp => { console.log("Got actors:", resp) })
+    .receive("error", resp => { console.log("Unable to get actors", resp) })
