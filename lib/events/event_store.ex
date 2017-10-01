@@ -1,4 +1,4 @@
-defmodule EventStore do
+defmodule Events.Store do
 
   use GenServer
 

@@ -31,7 +31,7 @@ defmodule ActorServerWeb.RoomChannel do
 
     def handle_info(:after_join, socket) do
       spawn( fn ->
-        EventStore.register_watcher(self())
+        Events.Store.register_watcher(self())
         event_pusher(socket)
       end)
       {:noreply, socket}
