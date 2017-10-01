@@ -7,8 +7,11 @@ defmodule ActorTracer do
     GenServer.call(__MODULE__, :get_pid)
   end
 
-  def trace(pid) do
-    :erlang.trace(pid, true, [:send, :receive, :exiting, :timestamp, {:tracer, ActorTracer.get_pid()}])
+  defmacro trace(pid) do
+    quote do
+      EventStore.new_event(Events.actor_started(__MODULE__, unquote(pid)))
+      :erlang.trace(unquote(pid), true, [:send, :receive, :exiting, :timestamp, {:tracer, ActorTracer.get_pid()}])
+    end
   end
 
   def start_link do
@@ -20,7 +23,6 @@ defmodule ActorTracer do
   end
 
   def handle_info(event, state) do
-    IO.inspect(event)
     EventStore.new_event(event)
     {:noreply, state}
   end

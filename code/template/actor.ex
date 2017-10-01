@@ -1,10 +1,12 @@
 defmodule {{actor_name}} do
     use GenServer
     require Logger
+    require ActorTracer
 
     def start_link do
-      ActorTracer.trace()
-      GenServer.start_link(__MODULE__, :ok, [])
+      {:ok, pid} = GenServer.start_link(__MODULE__, :ok, [])
+      ActorTracer.trace(pid)
+      {:ok, pid}
     end
 
     def ping(server) do

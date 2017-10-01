@@ -1,6 +1,7 @@
 defmodule SomeActor do
     use GenServer
     require Logger
+    require ActorTracer
 
     def start_link do
        {:ok, pid} = GenServer.start_link(__MODULE__, :ok, [])
@@ -21,7 +22,7 @@ defmodule SomeActor do
     end
 
     def handle_call("ping", _from, state) do
-        {:reply, "pong2", state}
+        {:reply, "pong", state}
     end
 
     def handle_cast("ping", state) do

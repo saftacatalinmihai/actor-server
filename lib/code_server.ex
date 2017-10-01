@@ -26,6 +26,9 @@ defmodule CodeServer do
   def update_actor_code(actor_type, new_code) do
     GenServer.call(__MODULE__, {:update_code, actor_type, new_code})
   end
+  def update_actor_code(actor_type) do
+    GenServer.call(__MODULE__, {:update_code, actor_type})
+  end
 
   def send_msg(to_pid, msg) do
     GenServer.call(__MODULE__, {:send_msg, to_pid, msg})
@@ -76,9 +79,17 @@ defmodule CodeServer do
     end
   end
 
+  def handle_call({:update_code, actor_type}, _from, state) do
+    reload_code(actor_type, state)
+  end
+
   def handle_call({:update_code, actor_type, new_code}, _from, state) do
     {:ok, file} = File.open "code/#{actor_type}.ex", [:write]
     IO.binwrite file, new_code
+    reload_code(actor_type, state)
+  end
+
+  defp reload_code(actor_type, state) do
     try do
       IO.inspect Code.eval_file("code/#{actor_type}.ex")
       {:reply, {:ok, %{:name => actor_type}}, state}

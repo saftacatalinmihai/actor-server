@@ -39,13 +39,29 @@ defmodule EventStore do
   end
 
   def handle_call({:new_event, event}, _from, %{:proc_events => ev_list, :watchers => watchers}) do
-    Enum.each(watchers, fn w -> send(w, event) end)
-    {:reply, :ok, %{:proc_events => [event | ev_list], :watchers => watchers}}
+    ev = handle_event(event, watchers)
+    {:reply, :ok, %{:proc_events => [ev | ev_list], :watchers => watchers}}
   end
 
   def handle_info(event, %{:proc_events => ev_list, :watchers => watchers}) do
-    Enum.each(watchers, fn w -> send(w, event) end)
-    {:noreply, %{:proc_events => [event | ev_list], :watchers => watchers}}
+    ev = handle_event(event, watchers)
+    {:noreply, %{:proc_events => [ev | ev_list], :watchers => watchers}}
+  end
+
+  defp handle_event(event, watchers) do
+    ev = case event do
+      %{:ev_type => :actor_started} ->  event
+      {:trace_ts, pid, :send, msg, to_pid, ts} ->
+        Events.send_msg_event(pid, to_pid, msg, ts)
+      {:trace_ts, pid, :receive, msg, ts} ->
+        Events.receive_msg_event(pid, msg, ts)
+      {:trace_ts, pid, :out_exited, _mfa, ts} ->
+        Events.actor_stoped(pid, ts)
+      e -> e
+      end
+
+    Enum.each(watchers, fn w -> send(w, ev) end)
+    ev
   end
 
 end
