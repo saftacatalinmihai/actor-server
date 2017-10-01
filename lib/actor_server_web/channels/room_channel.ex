@@ -9,7 +9,7 @@ defmodule ActorServerWeb.RoomChannel do
     def event_pusher(socket) do
       receive do
         ev ->
-          push socket, "event", %{:event => :ev}
+          push socket, "event", %{:event => ev}
           event_pusher(socket)
       end
     end

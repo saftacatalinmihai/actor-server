@@ -12,7 +12,7 @@
 // If you no longer want to use a dependency, remember
 // to also remove its path from "config.paths.watched".
 import "phoenix_html"
-import * as d3 from "d3";
+// import * as d3 from "d3";
 
 // Import local files
 //
@@ -25,3 +25,5 @@ console.log(channel)
 channel.push("get_actors")
     .receive("ok", resp => { console.log("Got actors:", resp) })
     .receive("error", resp => { console.log("Unable to get actors", resp) })
+
+channel.on("event", e => console.log(e))
