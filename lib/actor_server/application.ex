@@ -16,7 +16,8 @@ defmodule ActorServer.Application do
       # worker(ActorServer.Worker, [arg1, arg2, arg3]),
       worker(CodeServer, []),
       worker(Events.Store, []),
-      worker(ActorTracer, [])
+      worker(ActorTracer, []),
+      worker(RunningActors, [])
     ]
 
     # See https://hexdocs.pm/elixir/Supervisor.html

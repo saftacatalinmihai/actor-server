@@ -6,7 +6,7 @@ defmodule Events.Store do
     GenServer.start_link(__MODULE__, :ok, name: __MODULE__)
   end
 
-  def get_events do 
+  def get_events do
     GenServer.call(__MODULE__, :get_events)
   end
 
@@ -50,7 +50,7 @@ defmodule Events.Store do
 
   defp handle_event(event, watchers) do
     ev = case event do
-      %{:ev_type => :actor_started} ->  event
+      %{:ev_type => :actor_started} -> event
       {:trace_ts, pid, :send, msg, to_pid, ts} ->
         Events.send_msg_event(pid, to_pid, msg, ts)
       {:trace_ts, pid, :receive, msg, ts} ->
@@ -58,8 +58,7 @@ defmodule Events.Store do
       {:trace_ts, pid, :out_exited, _mfa, ts} ->
         Events.actor_stoped(pid, ts)
       e -> e
-      end
-
+    end
     Enum.each(watchers, fn w -> send(w, ev) end)
     ev
   end
