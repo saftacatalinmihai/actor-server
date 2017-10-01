@@ -9,22 +9,7 @@ defmodule ActorServerWeb.RoomChannel do
     def event_pusher(socket) do
       receive do
         ev ->
-           IO.puts "<Ev>"
-           IO.inspect ev
-           IO.puts "<Ev/>"
-          # TODO: fix to string for PIDS in events back to client
-# ** (Protocol.UndefinedError) protocol String.Chars not implemented for #PID<0.612.0>
-# backend_1   |     (elixir) lib/string/chars.ex:3: String.Chars.impl_for!/1
-# backend_1   |     (elixir) lib/string/chars.ex:17: String.Chars.to_string/1
-# backend_1   |     (backend) web/event_store.ex:38: anonymous fn/2 in EventStore.handle_info/2
-# backend_1   |     (elixir) lib/enum.ex:645: Enum."-each/2-lists^foreach/1-0-"/2
-# backend_1   |     (elixir) lib/enum.ex:645: Enum.each/2
-# backend_1   |     (backend) web/event_store.ex:38: EventStore.handle_info/2
-# backend_1   |     (stdlib) gen_server.erl:601: :gen_server.try_dispatch/4
-# backend_1   |     (stdlib) gen_server.erl:667: :gen_server.handle_msg/5
-# backend_1   |     (stdlib) proc_lib.erl:247: :proc_lib.init_p_do_apply/3
-# backend_1   | Last message: {:trace_ts, #PID<0.613.0>, :receive, {:"$gen_call", {#PID<0.427.0>, #Reference<0.0.2.5615>}, "ping"}, {1491, 569762, 812365}}
-          push socket, "event", %{:event => :ok}
+          push socket, "event", %{:event => :ev}
           event_pusher(socket)
       end
     end

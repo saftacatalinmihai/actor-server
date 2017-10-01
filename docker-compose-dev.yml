@@ -2,7 +2,7 @@ version: "3"
 services:
   actor-server:
     build: .
-    command: bash -c "npm install; mix deps.unlock --all; mix deps.update --all; mix ecto.create; mix phx.server"
+    command: bash -c "npm install; mix deps.unlock --all; mix deps.update --all; mix ecto.create; iex -S mix phx.server"
     volumes:
       - ./:/code
     ports:
