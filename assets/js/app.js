@@ -26,4 +26,9 @@ channel.push("get_actors")
     .receive("ok", resp => { console.log("Got actors:", resp) })
     .receive("error", resp => { console.log("Unable to get actors", resp) })
 
-channel.on("event", e => console.log(e))
+channel.on("event", handle_event)
+
+function handle_event(e) {
+    e.ts = new Date(parseInt(e.ts))
+    console.log(e)
+}
