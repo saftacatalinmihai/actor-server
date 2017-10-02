@@ -15,5 +15,5 @@ config :actor_server, ActorServer.Repo,
   username: "postgres",
   password: "postgres",
   database: "actor_server_test",
-  hostname: "localhost",
+  hostname: "db",
   pool: Ecto.Adapters.SQL.Sandbox

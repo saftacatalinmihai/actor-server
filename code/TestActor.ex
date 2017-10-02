@@ -1,4 +1,4 @@
-defmodule SomeActor do
+defmodule TestActor do
     use GenServer
     require Logger
     require ActorTracer
