@@ -25,10 +25,7 @@ defmodule Events do
     (mega*1000000 + seconds)*1000 + :erlang.round(ms/1000)
   end
 
-  defp format_pid(pid) do
-    case pid do
-      :error_logger -> :error_logger
-      p when is_pid(p) -> to_string(:erlang.pid_to_list(p))
-    end
-  end
+  defp format_pid(:error_logger), do: :error_logger
+  defp format_pid(p), do: to_string(:erlang.pid_to_list(p))
+
 end
