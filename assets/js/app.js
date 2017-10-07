@@ -31,4 +31,5 @@ channel.on("event", handle_event)
 function handle_event(e) {
     e.ts = new Date(parseInt(e.ts))
     console.log(e)
+    document.getElementById("log").appendChild(document.createTextNode(JSON.stringify(e)))
 }

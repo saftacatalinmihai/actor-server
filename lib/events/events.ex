@@ -9,11 +9,11 @@ defmodule Events do
   end
 
   def send_msg_event(pid, to_pid, msg, ts) do
-    %{:ev_type => :message_sent, :pid => to_string(:erlang.pid_to_list(pid)), :to_pid => format_pid(to_pid), :msg => inspect(msg), :ts => timestamp_to_millis(ts)}
+    %{:ev_type => :message_sent, :pid => to_string(:erlang.pid_to_list(pid)), :to_pid => format_pid(to_pid), :msg => inspect(msg, pretty: true), :ts => timestamp_to_millis(ts)}
   end
 
   def receive_msg_event(pid, msg, ts) do
-    %{:ev_type => :message_received, :pid => format_pid(pid), :msg => inspect(msg), :ts => timestamp_to_millis(ts)}
+    %{:ev_type => :message_received, :pid => format_pid(pid), :msg => inspect(msg, pretty: true), :ts => timestamp_to_millis(ts)}
   end
 
   def actor_stoped(pid, ts) do
