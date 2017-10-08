@@ -21,17 +21,36 @@ import * as d3 from "d3";
 
 import channel from "./socket"
 
+let state = {"actor_types":[], "numActors": 0, "actors": {}, "event_log": []}
+function next_idx(state) {
+    state["numActors"] = state["numActors"] + 1
+    return state["numActors"]
+}
 channel.push("get_actors")
     .receive("ok", resp => {
         console.log("Got actors:", resp)
+        state["actor_types"] = resp.actors
     })
     .receive("error", resp => {
         console.log("Unable to get actors", resp)
     })
 
-channel.on("event", handle_event)
+channel.push("get_running_actors")
+    .receive("ok", resp => {
+        console.log("Got running actors:", resp)
+        Object.entries(resp.actors).forEach(([module, actors]) => {
+            actors.forEach(a => {
+                state["actors"][a.pid] = {"module": module, "started": a.ts, "idx": next_idx(state) }
+            })
+        })
+        render(state)
 
-let state = {"numActors": 0, "actors": {}, "event_log": []}
+    })
+    .receive("error", resp => {
+        console.log("Unable to get running actors", resp)
+    })
+
+channel.on("event", handle_event)
 
 function handle_event(e) {
     e.ts = new Date(parseInt(e.ts))
@@ -40,8 +59,7 @@ function handle_event(e) {
 
     switch (e.ev_type) {
         case "actor_started":
-            state["numActors"] = state["numActors"] + 1
-            state["actors"][e.pid] = {"module": e.module, "started": e.ts, "idx": state["numActors"] }
+            state["actors"][e.pid] = {"module": e.module, "started": e.ts, "idx": next_idx(state) }
             break
         case "actor_stopped":
             delete state["actors"][e.pid]

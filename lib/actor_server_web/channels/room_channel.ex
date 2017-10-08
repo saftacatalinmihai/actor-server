@@ -27,6 +27,11 @@ defmodule ActorServerWeb.RoomChannel do
         {:reply, {:ok, %{:actors => actor_modules}}, socket}
     end
 
+    def handle_in("get_running_actors", _attrs, socket) do
+      running_actors = RunningActors.get_running_actors()
+      {:reply, {:ok, %{:actors => running_actors}}, socket}
+    end
+
     def handle_in("start_actor", %{"type" => name}, socket) do
         IO.puts "start actor received #{name}"
         {:reply, CodeServer.start_actor(name), socket}

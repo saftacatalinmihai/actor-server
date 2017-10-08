@@ -138,4 +138,30 @@ defmodule CodeServer do
     type
   end
 
+  def integration_test() do
+    sleep_time = 200
+    CodeServer.start_actor("TestActor")
+    :timer.sleep(sleep_time)
+    CodeServer.start_actor("TestActor")
+    :timer.sleep(sleep_time)
+    {:ok, %{:name => name, :pid => pid}} = CodeServer.start_actor("TestActor")
+    :timer.sleep(sleep_time)
+    CodeServer.start_actor("TestActor")
+    :timer.sleep(sleep_time)
+    CodeServer.start_actor("TestActor")
+    :timer.sleep(sleep_time)
+    CodeServer.send_msg(pid, "\"ping\"")
+    :timer.sleep(sleep_time)
+    try do
+      CodeServer.send_msg(pid, "\"ping2\"")
+    catch
+      :exit, _ ->
+        IO.puts("Expected to fail")
+        :timer.sleep(sleep_time)
+    end
+    CodeServer.start_actor("TestActor")
+    :timer.sleep(sleep_time)
+    CodeServer.start_actor("TestActor")
+  end
+
 end
