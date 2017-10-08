@@ -2,7 +2,7 @@
 let state = init_state()
 
 export function init_state() {
-    return {"actor_types": [], "numActors": 0, "actors": {}, "event_log": []}
+    return {"actor_types": [], "numActors": 0, "actors": [], "event_log": []}
 }
 
 export function next_idx() {
@@ -17,17 +17,19 @@ export function set_actor_types(actor_types) {
 export function set_running_actors(running_actors) {
     Object.entries(running_actors).forEach(([module, actors]) => {
         actors.forEach(a => {
-            state["actors"][a.pid] = {"module": module, "started": a.ts, "idx": next_idx(state) }
+            state["actors"].push({"pid": a.pid, "module": module, "started": a.ts, "idx": next_idx(state) })
         })
     })
 }
 
 export function actor_started(pid, module, ts) {
-    state["actors"][pid] = {"module": module, "started": ts, "idx": next_idx(state) }
+    state["actors"].push({"pid": pid, "module": module, "started": ts, "idx": next_idx(state) })
 }
 
 export function actor_stopped(pid) {
-    delete state["actors"][pid]
+    state["actors"] = state["actors"].filter(a => {
+        return a.pid !== pid
+    })
 }
 
 export function push_event(ev) {
