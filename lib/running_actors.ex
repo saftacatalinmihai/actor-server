@@ -34,6 +34,7 @@ defmodule RunningActors do
     {:noreply, state}
   end
 
+  # TODO: add tests
   defp add_running_actor(state, module, pid, ts)  do
     Map.update(
       state,
