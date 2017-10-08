@@ -12,7 +12,7 @@
 // If you no longer want to use a dependency, remember
 // to also remove its path from "config.paths.watched".
 import "phoenix_html"
-// import * as d3 from "d3";
+import * as d3 from "d3";
 
 // Import local files
 //
@@ -21,20 +21,68 @@ import "phoenix_html"
 
 import channel from "./socket"
 
-console.log(channel)
 channel.push("get_actors")
-    .receive("ok", resp => { console.log("Got actors:", resp) })
-    .receive("error", resp => { console.log("Unable to get actors", resp) })
+    .receive("ok", resp => {
+        console.log("Got actors:", resp)
+    })
+    .receive("error", resp => {
+        console.log("Unable to get actors", resp)
+    })
 
 channel.on("event", handle_event)
+
+let state = {"numActors": 0, "actors": {}, "event_log": []}
 
 function handle_event(e) {
     e.ts = new Date(parseInt(e.ts))
     console.log(e)
-    let logs = document.getElementById("log");
-    let para = document.createElement("p")
-    para.innerHTML = JSON.stringify(e)
-    logs.appendChild(para)
-    logs.appendChild(document.createElement("br"))
+    state["event_log"].push(e)
 
+    switch (e.ev_type) {
+        case "actor_started":
+            state["numActors"] = state["numActors"] + 1
+            state["actors"][e.pid] = {"module": e.module, "started": e.ts, "idx": state["numActors"] }
+            break
+        case "actor_stopped":
+            delete state["actors"][e.pid]
+            break
+    }
+
+    render(state)
+}
+
+let scale = d3.scaleLinear()
+    .domain([0, 10])
+    .range([0, 500])
+
+let svg = d3.select("body").append("svg")
+    .attr("width", 1000)
+    .attr("height", 20)
+
+let events = d3.select("body").append("div")
+
+function render(state) {
+    render_actors(state["actors"])
+    render_events(state["event_log"])
+}
+function render_actors(state) {
+    console.log(state)
+    let rects = svg.selectAll("rect").data(d3.entries(state))
+
+    rects.enter().append("rect")
+        .attr("x", e => scale(e.value.idx))
+        .attr("y", 0)
+        .attr("width", 20)
+        .attr("height", 20)
+
+    rects.attr("x", e => scale(e.value.idx))
+    rects.exit().remove()
+}
+
+function render_events(state) {
+    events.selectAll("p")
+        .data(state)
+        .enter().append("p")
+        .attr("style", "white-space: nowrap;")
+        .html(e => JSON.stringify(e))
 }

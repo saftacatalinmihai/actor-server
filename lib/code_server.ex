@@ -44,7 +44,7 @@ defmodule CodeServer do
   end
 
   def handle_call({:start_actor, actor_type}, _from, state) do
-    case :"Elixir.#{actor_type}".start_link do
+    case :"Elixir.#{actor_type}".start do
       {:ok, pid} ->
         IO.inspect pid
         {:reply, {:ok, %{:name => actor_type, :pid => to_string(:erlang.pid_to_list(pid))}}, state}
