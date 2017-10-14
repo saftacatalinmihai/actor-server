@@ -53,7 +53,7 @@ function handle_event(e) {
             m.actor_started(e.pid, e.module, e.ts)
             break
         case "actor_stopped":
-            m.actor_started(e.pid)
+            m.actor_stopped(e.pid)
             break
     }
 

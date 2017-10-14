@@ -2,7 +2,7 @@ defmodule CodeServerTest do
   use ExUnit.Case
 
   setup_all do
-    {:ok, %{:name => name, :pid => pid}} = CodeServer.start_actor("TestActor")
+    {:ok, %{:name => _, :pid => pid}} = CodeServer.start_actor("TestActor")
     {:ok, pid: pid}
   end
 

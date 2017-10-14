@@ -1,6 +1,6 @@
 defmodule RunningActors do
   @moduledoc false
-
+  @compile if Mix.env == :test, do: :export_all
   use GenServer
 
   def start_link do
@@ -45,10 +45,10 @@ defmodule RunningActors do
   end
 
   defp remove_running_actor(state, pid) do
-    match = for {m, ps} <- state, %{pid: p, ts: ts} <- ps, p == pid, do: {m, {p, ts}}
+    match = for {m, ps} <- state, %{pid: p, ts: ts} <- ps, p == pid, do: {m, p, ts}
 
     case match do
-      [{mod, %{pid: p_to_rem, ts: ts}}] -> Map.update(state, mod, [], &(List.delete(&1, %{pid: p_to_rem, ts: ts})))
+      [{mod, p_to_rem, ts}] -> Map.update(state, mod, [], &(List.delete(&1, %{pid: p_to_rem, ts: ts})))
       _ -> state
     end
   end
