@@ -1,77 +1,90 @@
 
 import * as d3 from "d3";
 
-export function render(state) {
-    render_actors(state["actors"])
-    render_events(state["event_log"])
-}
-
 // Running actors:
 let width = window.innerWidth, height = window.innerHeight
-
 let svg = d3.select("#app").append("svg")
     .attr("width", width)
     .attr("height", height)
-let nodePadding = 10;
 
-let color = d3.scaleOrdinal(d3.schemeCategory20);
+let state = []
 
+//set up the simulation
 let simulation = d3.forceSimulation()
-    .force("forceX", d3.forceX().strength(.1).x(width/2))
-    .force("forceY", d3.forceY().strength(.1).y(height/2))
-    .force("center", d3.forceCenter().x(width/2).y(height/2))
-    .force("charge", d3.forceManyBody().strength(-15))
+    .force("charge_force", d3.forceManyBody())
+    .force("center_force", d3.forceCenter(width / 2, height / 2))
 
-function render_actors(state) {
-    let node = svg.append("g")
-        .attr("class", "nodes")
-        .selectAll("circle")
-        .data(state)
 
-    node.enter().append("circle")
-        .attr("r", 10)
-        .attr("fill", d => color(d.pid))
-        .attr("cx", d => d.x)
-        .attr("cy", d => d.y)
-        .attr("x-pid", d => d.pid)
-        .call(d3.drag()
-            .on("start", dragstarted)
-            .on("drag", dragged)
-            .on("end", dragended))
+let node = svg.append("g")
+    .selectAll("circle")
 
-    node.attr("cx", d => d.x)
-        .attr("cy", d => d.y)
+function render_actors() {
+    console.log("State")
+    console.log(state)
 
+    //draw circles for the links
+    node = node.data(state)
+
+    // EXIT
     node.exit().remove()
 
-    simulation
-        .nodes(state)
-        .force("forceX", d3.forceX().strength(.1).x(width/2))
-        .force("forceY", d3.forceY().strength(.1).y(height/2))
-        .force("center", d3.forceCenter().x(width/2).y(height/2))
-        .force("charge", d3.forceManyBody().strength(-15))
-        .force("collide", d3.forceCollide().strength(2).radius(function(d){ return d.radius + nodePadding; }).iterations(1))
-        .on("tick", ticked)
+    // NEW + Update
+    let new_node = node.enter()
+        .append("circle")
+        .attr("class", "nodes")
+        .attr("r", 10)
+        .attr("fill", "blue")
+        .call(d3.drag()
+            .on("start", drag_start)
+            .on("drag", drag_drag)
+            .on("end", drag_end))
 
-    function ticked() {
-        node
-            .attr("cx", d => d.x)
-            .attr("cy", d => d.y);
-    }
+    new_node.append("title")
+        .text(d => "module: " + d.module + "\n" + "pid: " + d.pid)
+
+    node = node.merge(new_node)
+
+    simulation.nodes(state).on("tick", tickActions )
+    simulation.restart();
 }
 
-function dragstarted(d) {
+export function init(s) {
+    state = s["actors"].map(d => {return {"pid": d.pid, "module": d.module}})
+    render_actors()
+}
+export function render_actor_started(pid, module) {
+    console.log("Pushing")
+    console.log(pid)
+    console.log(module)
+    state.push({"pid": pid, "module": module})
+    render_actors()
+}
+
+export function render_actor_stopped(pid) {
+    state = state.filter(a => {
+        return a.pid !== pid
+    })
+    render_actors()
+}
+
+function tickActions() {
+    node
+        .attr("cx", d => d.x)
+        .attr("cy", d => d.y);
+}
+
+function drag_start(d) {
     if (!d3.event.active) simulation.alphaTarget(0.3).restart();
     d.fx = d.x;
     d.fy = d.y;
 }
 
-function dragged(d) {
+function drag_drag(d) {
     d.fx = d3.event.x;
     d.fy = d3.event.y;
 }
 
-function dragended(d) {
+function drag_end(d) {
     if (!d3.event.active) simulation.alphaTarget(0);
     d.fx = null;
     d.fy = null;
@@ -80,7 +93,7 @@ function dragended(d) {
 // Event log:
 let events = d3.select("#app").append("div")
 
-function render_events(state) {
+export function render_events(state) {
     events.selectAll("p")
         .data(state)
         .enter().append("p")
