@@ -2,23 +2,26 @@
 import * as d3 from "d3";
 
 // Running actors:
-let width = window.innerWidth, height = window.innerHeight
-let svg = d3.select("#app").append("svg")
-    .attr("width", width)
-    .attr("height", height)
+let margin = {top: -5, right: -5, bottom: -5, left: -5}
+let width = 960 - margin.left - margin.right
+let height = 500 - margin.top - margin.bottom
 
-let state = []
+let color = d3.scaleOrdinal(d3.schemeCategory10);
+
+let svg = d3.select("#app").append("svg")
+    .attr("width", width + margin.left + margin.right)
+    .attr("height", height + margin.top + margin.bottom)
 
 //set up the simulation
 let simulation = d3.forceSimulation()
-    .force("charge_force", d3.forceManyBody())
+    .force("charge_force", d3.forceManyBody().strength(-10))
     .force("center_force", d3.forceCenter(width / 2, height / 2))
 
 
 let node = svg.append("g")
     .selectAll("circle")
 
-function render_actors() {
+export function render_actors(state) {
     console.log("State")
     console.log(state)
 
@@ -33,7 +36,7 @@ function render_actors() {
         .append("circle")
         .attr("class", "nodes")
         .attr("r", 10)
-        .attr("fill", "blue")
+        .attr("fill", d => color(d.module))
         .call(d3.drag()
             .on("start", drag_start)
             .on("drag", drag_drag)
@@ -45,26 +48,7 @@ function render_actors() {
     node = node.merge(new_node)
 
     simulation.nodes(state).on("tick", tickActions )
-    simulation.restart();
-}
-
-export function init(s) {
-    state = s["actors"].map(d => {return {"pid": d.pid, "module": d.module}})
-    render_actors()
-}
-export function render_actor_started(pid, module) {
-    console.log("Pushing")
-    console.log(pid)
-    console.log(module)
-    state.push({"pid": pid, "module": module})
-    render_actors()
-}
-
-export function render_actor_stopped(pid) {
-    state = state.filter(a => {
-        return a.pid !== pid
-    })
-    render_actors()
+    simulation.restart()
 }
 
 function tickActions() {

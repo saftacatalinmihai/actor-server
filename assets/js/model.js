@@ -1,3 +1,4 @@
+import * as v from "./view"
 
 let state = init_state()
 
@@ -20,22 +21,22 @@ export function set_running_actors(running_actors) {
             state["actors"].push({"pid": a.pid, "module": module, "started": a.ts, "idx": next_idx(state) })
         })
     })
+    v.render_actors(state["actors"])
 }
 
 export function actor_started(pid, module, ts) {
     state["actors"].push({"pid": pid, "module": module, "started": ts, "idx": next_idx(state) })
+    v.render_actors(state["actors"])
 }
 
 export function actor_stopped(pid) {
     state["actors"] = state["actors"].filter(a => {
         return a.pid !== pid
     })
+    v.render_actors(state["actors"])
 }
 
 export function push_event(ev) {
     state["event_log"].push(ev)
-}
-
-export function get_state() {
-    return state
+    v.render_events(state["event_log"])
 }

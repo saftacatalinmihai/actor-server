@@ -20,7 +20,6 @@ import "phoenix_html"
 
 import channel from "./socket"
 import * as m from "./model"
-import * as v from "./view"
 
 channel.push("get_actors")
     .receive("ok", resp => {
@@ -35,7 +34,6 @@ channel.push("get_running_actors")
     .receive("ok", resp => {
         console.log("Got running actors:", resp)
         m.set_running_actors(resp.actors)
-        v.init(m.get_state())
     })
     .receive("error", resp => {
         console.log("Unable to get running actors", resp)
@@ -51,13 +49,9 @@ function handle_event(e) {
     switch (e.ev_type) {
         case "actor_started":
             m.actor_started(e.pid, e.module, e.ts)
-            v.render_actor_started(e.pid, e.module)
             break
         case "actor_stopped":
             m.actor_stopped(e.pid)
-            v.render_actor_stopped(e.pid)
             break
     }
-
-    v.render_events(m.get_state()["event_log"])
 }
