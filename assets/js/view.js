@@ -1,4 +1,3 @@
-
 import * as d3 from "d3";
 
 // Running actors:
@@ -6,20 +5,23 @@ let margin = {top: -5, right: -5, bottom: -5, left: -5}
 let width = 960 - margin.left - margin.right
 let height = 500 - margin.top - margin.bottom
 let radius = 10
-let color = d3.scaleOrdinal(d3.schemeCategory10);
+let color = d3.scaleOrdinal(d3.schemeCategory20c);
 
 let svg = d3.select("#app").append("svg")
     .attr("width", width)
     .attr("height", height)
 
+// svg.on('mousemove', () => {
+//     console.log("X: " + d3.event.clientX + " Y: " + d3.event.clientY)
+// })
+
 //set up the simulation
 let simulation = d3.forceSimulation()
-    .force("charge_force", d3.forceManyBody().strength(-500))
-    .force("x", d3.forceX(width/2).strength(0.7))
-    .force("y", d3.forceY(height/2).strength(0.7))
+    .force("charge_force", d3.forceManyBody().strength(-200))
+    .force("x", d3.forceX(width / 2).strength(0.2))
+    .force("y", d3.forceY(height / 2).strength(0.2))
 
-let node = svg.append("g")
-    .selectAll("circle")
+let node = svg.append("g").selectAll(".node")
 
 export function render_actors(state) {
     console.log("State")
@@ -33,28 +35,39 @@ export function render_actors(state) {
 
     // NEW + Update
     let new_node = node.enter()
-        .append("circle")
-        .attr("class", "nodes")
-        .attr("r", radius)
-        .attr("fill", d => color(d.module))
+        .append("g")
+        .attr("class", "node")
         .call(d3.drag()
             .on("start", drag_start)
             .on("drag", drag_drag)
             .on("end", drag_end))
 
+    new_node.append("circle")
+        .attr("r", radius)
+        .attr("fill", d => color(d.module))
+
     new_node.append("title")
         .text(d => "module: " + d.module + "\n" + "pid: " + d.pid)
 
+    new_node.append("text")
+        .attr("dx", 12)
+        .attr("dy", ".35em")
+        .text(d => d.pid)
+
     node = node.merge(new_node)
 
-    simulation.nodes(state).on("tick", tickActions )
+    simulation.nodes(state).on("tick", tickActions)
     simulation.restart()
 }
 
 function tickActions() {
-    node
-        .attr("cx", d => d.x = Math.max(radius, Math.min(width - radius, d.x)))
-        .attr("cy", d => d.y = Math.max(radius, Math.min(height - radius, d.y)))
+    node.attr("transform", d => {
+        return "translate(" +
+            Math.max(radius, Math.min(width - radius, d.x)) +
+            "," +
+            Math.max(radius, Math.min(height - radius, d.y)) +
+            ")"
+    })
 }
 
 function drag_start(d) {
