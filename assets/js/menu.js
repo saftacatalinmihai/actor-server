@@ -3,6 +3,11 @@ import {sendMessage} from "./send-message";
 
 let selected = undefined
 
+$(document).ready(function(){
+    // the "href" attribute of the modal trigger must specify the modal ID that wants to be triggered
+    $('.modal').modal();
+});
+
 $(document).bind("mousedown", e => {
 
     // If the clicked element is not the menu
@@ -23,7 +28,7 @@ $(".custom-menu li").click( function (e) {
             alert("show-code");
             break;
         case "send-message":
-            sendMessage(selected.pid, "\"ping\"")
+            sendMessage(selected.pid)
             break;
         case "stop":
             alert("stop");

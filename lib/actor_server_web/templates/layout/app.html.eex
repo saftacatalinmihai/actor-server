@@ -26,7 +26,25 @@
       </ul>
       <div id="app"></div>
 
+      <!-- Modal Structure -->
+      <div id="message-modal" class="modal bottom-sheet">
+        <div class="modal-content">
+            <form id="msg-from" class="col s12">
+                <div class="input-field col s12">
+                  <input id="msg" type="text" class="validate">
+                  <label for="msg">Message</label>
+                </div>
+            </form>
+        </div>
+      </div>
+
     </div> <!-- /container -->
     <script src="<%= static_path(@conn, "/js/app.js") %>"></script>
+    <!-- Compiled and minified CSS -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/materialize/0.100.2/css/materialize.min.css">
+
+    <!-- Compiled and minified JavaScript -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/materialize/0.100.2/js/materialize.min.js"></script>
+
   </body>
 </html>
