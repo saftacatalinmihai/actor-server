@@ -38,11 +38,11 @@ export function render_actors(state) {
             .on("start", drag_start)
             .on("drag", drag_drag)
             .on("end", drag_end))
-        .on("contextmenu", (e) => {
+        .on("contextmenu", (node) => {
             d3.event.preventDefault();
 
             // Show contextmenu
-            menu.show(d3.event.pageX, d3.event.pageY)
+            menu.show(d3.event.pageX, d3.event.pageY, node)
         })
 
     new_node.append("circle")

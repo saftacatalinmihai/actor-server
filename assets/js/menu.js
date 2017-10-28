@@ -1,4 +1,7 @@
 import $ from "jquery"
+import {sendMessage} from "./send-message";
+
+let selected = undefined
 
 $(document).bind("mousedown", e => {
 
@@ -10,7 +13,7 @@ $(document).bind("mousedown", e => {
     }
 });
 
-$(".custom-menu li").click(() => {
+$(".custom-menu li").click( function (e) {
 
     // This is the triggered action name
     switch ($(this).attr("data-action")) {
@@ -20,7 +23,7 @@ $(".custom-menu li").click(() => {
             alert("show-code");
             break;
         case "send-message":
-            alert("send-message");
+            sendMessage(selected.pid, "\"ping\"")
             break;
         case "stop":
             alert("stop");
@@ -31,7 +34,7 @@ $(".custom-menu li").click(() => {
     $(".custom-menu").hide(100);
 });
 
-export function show(x, y) {
+export function show(x, y, d) {
 
     // Show contextmenu
     $(".custom-menu").finish().toggle(100).// In the right position (the mouse)
@@ -39,4 +42,5 @@ export function show(x, y) {
         top: y + "px",
         left: x + "px"
     })
+    selected = d
 }
