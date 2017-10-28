@@ -24,7 +24,7 @@ svg:not(.active):not(.ctrl) path.link {
 }
 
 path.link.selected {
-    stroke-dasharray: 10,2;
+    stroke-dasharray: 10, 2;
 }
 
 path.link.dragline {
@@ -50,7 +50,24 @@ text {
     pointer-events: none;
 }
 
-/*text.id {*/
-    /*text-anchor: middle;*/
-    /*font-weight: bold;*/
-/*}*/
+.custom-menu {
+    display: none;
+    z-index: 1000;
+    position: absolute;
+    overflow: hidden;
+    border: 1px solid #CCC;
+    white-space: nowrap;
+    font-family: sans-serif;
+    background: #FFF;
+    color: #333;
+    border-radius: 5px;
+}
+
+.custom-menu li {
+    padding: 8px 12px;
+    cursor: pointer;
+}
+
+.custom-menu li:hover {
+    background-color: #DEF;
+}

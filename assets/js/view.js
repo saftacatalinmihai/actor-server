@@ -1,4 +1,5 @@
-import * as d3 from "d3";
+import * as d3 from "d3"
+import * as menu from "./menu"
 
 // Running actors:
 let margin = {top: -5, right: -5, bottom: -5, left: -5}
@@ -10,10 +11,6 @@ let color = d3.scaleOrdinal(d3.schemeCategory20c);
 let svg = d3.select("#app").append("svg")
     .attr("width", width)
     .attr("height", height)
-
-// svg.on('mousemove', () => {
-//     console.log("X: " + d3.event.clientX + " Y: " + d3.event.clientY)
-// })
 
 //set up the simulation
 let simulation = d3.forceSimulation()
@@ -41,6 +38,12 @@ export function render_actors(state) {
             .on("start", drag_start)
             .on("drag", drag_drag)
             .on("end", drag_end))
+        .on("contextmenu", (e) => {
+            d3.event.preventDefault();
+
+            // Show contextmenu
+            menu.show(d3.event.pageX, d3.event.pageY)
+        })
 
     new_node.append("circle")
         .attr("r", radius)
@@ -63,10 +66,8 @@ export function render_actors(state) {
 function tickActions() {
     node.attr("transform", d => {
         return "translate(" +
-            Math.max(radius, Math.min(width - radius, d.x)) +
-            "," +
-            Math.max(radius, Math.min(height - radius, d.y)) +
-            ")"
+            Math.max(radius, Math.min(width - radius, d.x)) + "," +
+            Math.max(radius, Math.min(height - radius, d.y)) + ")"
     })
 }
 

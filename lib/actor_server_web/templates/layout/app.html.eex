@@ -19,6 +19,11 @@
       <main role="main">
         <%= render @view_module, @view_template, assigns %>
       </main>
+      <ul class='custom-menu'>
+        <li data-action = "show-code">Show code</li>
+        <li data-action = "send-message">Send message</li>
+        <li data-action = "stop">Stop</li>
+      </ul>
       <div id="app"></div>
 
     </div> <!-- /container -->
