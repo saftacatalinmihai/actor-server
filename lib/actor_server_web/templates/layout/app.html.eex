@@ -8,11 +8,12 @@
     <meta name="author" content="">
     <title>Hello ActorServer!</title>
     <link rel="stylesheet" href="<%= static_path(@conn, "/css/app.css") %>">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.31.0/codemirror.min.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.31.0/theme/monokai.min.css">
   </head>
 
   <body>
     <div class="container">
-
       <p class="alert alert-info" role="alert"><%= get_flash(@conn, :info) %></p>
       <p class="alert alert-danger" role="alert"><%= get_flash(@conn, :error) %></p>
 
@@ -26,8 +27,11 @@
       </ul>
       <div id="app"></div>
 
-      <!-- Modal Structure -->
-      <div id="message-modal" class="modal bottom-sheet">
+      <div id="code-editor-modal" class="modal bottom-sheet">
+          <textarea id="editor"></textarea>
+      </div>
+
+      <div id="msg-modal" class="modal bottom-sheet">
         <div class="modal-content">
             <form id="msg-from" class="col s12">
                 <div class="input-field col s12">

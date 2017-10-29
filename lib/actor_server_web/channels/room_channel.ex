@@ -43,11 +43,13 @@ defmodule ActorServerWeb.RoomChannel do
     end
 
     def handle_in("update_actor", %{"name" => name, "actor_code" => code }, socket) do
+      name = norm_module(name)
       IO.puts "update actor received #{name}"
       {:reply, CodeServer.update_actor_code(name, code), socket}
     end
 
     def handle_in("get_actor_code", %{"name" => name}, socket) do
+      name = norm_module(name)
       IO.puts "getting actor code #{name}"
       {:reply, CodeServer.get_actor_code(name), socket}
     end
@@ -57,6 +59,10 @@ defmodule ActorServerWeb.RoomChannel do
       IO.inspect pid
       IO.inspect msg
       {:reply, CodeServer.send_msg(pid, msg), socket}
+    end
+
+    defp norm_module(module) do
+      String.replace(module, "Elixir.", "")
     end
 
 end

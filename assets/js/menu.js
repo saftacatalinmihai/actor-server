@@ -1,7 +1,8 @@
 import $ from "jquery"
-import {sendMessage} from "./send-message";
+import {sendMessage} from "./send-message"
+import {showCode} from "./code-editor"
 
-let selected = undefined
+let SELECTED = undefined
 
 $(document).ready(function(){
     // the "href" attribute of the modal trigger must specify the modal ID that wants to be triggered
@@ -25,10 +26,11 @@ $(".custom-menu li").click( function (e) {
 
         // A case for each action. Your actions here
         case "show-code":
-            alert("show-code");
+            console.log(SELECTED)
+            showCode(SELECTED.module)
             break;
         case "send-message":
-            sendMessage(selected.pid)
+            sendMessage(SELECTED.pid)
             break;
         case "stop":
             alert("stop");
@@ -47,5 +49,5 @@ export function show(x, y, d) {
         top: y + "px",
         left: x + "px"
     })
-    selected = d
+    SELECTED = d
 }
