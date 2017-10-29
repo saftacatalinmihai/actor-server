@@ -107,9 +107,19 @@ defmodule CodeServer do
       rec = GenServer.call(pid, msg_evaled)
       {:reply, {:ok, %{:received => rec}}, state}
     rescue
+      e in RuntimeError ->
+        IO.inspect e
+        IO.puts("Runtime error")
+        {:reply, {:error, %{:reson => inspect(e)}}, state}
+    catch
       e ->
         IO.inspect e
-      {:reply, {:error, %{:reson => e}}, state}
+        IO.puts("Catch error")
+        {:reply, {:error, %{:reson => inspect(e)}}, state}
+      :exit, e ->
+        IO.inspect e
+        IO.puts("Catch exit")
+        {:reply, {:error, %{:reson => inspect(e)}}, state}
     end
   end
 
