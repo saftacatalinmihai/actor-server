@@ -5,7 +5,7 @@ import * as menu from "./menu"
 let margin = {top: -5, right: -5, bottom: -5, left: -5}
 let width = 960 - margin.left - margin.right
 let height = 500 - margin.top - margin.bottom
-let radius = 10
+let radius = 20
 let color = d3.scaleOrdinal(d3.schemeCategory20c);
 
 let svg = d3.select("#app").append("svg")
@@ -14,7 +14,7 @@ let svg = d3.select("#app").append("svg")
 
 //set up the simulation
 let simulation = d3.forceSimulation()
-    .force("charge_force", d3.forceManyBody().strength(-200))
+    .force("charge_force", d3.forceManyBody().strength(-500))
     .force("x", d3.forceX(width / 2).strength(0.2))
     .force("y", d3.forceY(height / 2).strength(0.2))
 
@@ -98,3 +98,6 @@ export function render_events(state) {
         .attr("style", "white-space: nowrap;")
         .html(e => JSON.stringify(e))
 }
+
+export function initX(){ return width / 2}
+export function initY(){ return height / 2}

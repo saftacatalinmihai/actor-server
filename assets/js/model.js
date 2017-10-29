@@ -25,7 +25,9 @@ export function set_running_actors(running_actors) {
 }
 
 export function actor_started(pid, module, ts) {
-    state["actors"].push({"pid": pid, "module": module, "started": ts, "idx": next_idx(state) })
+    state["actors"].push({"pid": pid, "module": module, "started": ts, "idx": next_idx(state),
+        "x": v.initX(), "y": v.initY()
+    })
     v.render_actors(state["actors"])
 }
 

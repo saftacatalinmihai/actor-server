@@ -11,7 +11,7 @@ export function sendMessage(toPid) {
 
 $("#msg-from").submit(event => {
     $('#msg-modal').modal('close')
-    $(".svg").focus()
+    $("svg").focus()
     event.preventDefault()
     let msg = $("#msg").val()
     channel.push("send_msg", {"to": TO_PID, "msg": "\"" + msg + "\""})
