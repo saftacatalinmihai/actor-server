@@ -103,7 +103,7 @@ defmodule CodeServer do
           {:reply, {:error, %{:reason => reason}}, %{:actor_types => actor_types}}
       end
     else
-      {:reply, {:ok, %{:actor_type => actor_type}}, %{:actor_types => actor_types}}
+      {:reply, {:error, %{:reason => "Actor type #{actor_type} already exists"}}, %{:actor_types => actor_types}}
     end
   end
 

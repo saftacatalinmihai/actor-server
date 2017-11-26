@@ -1,6 +1,7 @@
 import channel from "./socket"
 import $ from "jquery"
 import {success, error} from "./notifications";
+import {start_actor} from "./start-actor";
 
 let ACTIVE = false
 
@@ -20,12 +21,13 @@ $("#actor-type-modal").submit(event => {
         if (actor_type.length > 0) {
             channel.push("new_actor", {"name": actor_type})
                 .receive("ok", resp => {
-                    success("Actor created")
+                    success("Actor type created: " + actor_type)
                     console.log("Resp:", resp)
+                    start_actor(actor_type)
                 })
                 .receive("error", resp => {
-                    error("Unable to create new actor")
-                    console.log("Unable to start actor type: [" + actor_type + "]. Error: ", resp)
+                    error("Unable to create new actor. Reason: " + resp['reason'])
+                    console.log("Unable to create actor type: [" + actor_type + "]. Error: ", resp)
                 })
         } else {
             console.log("Actor type empty")
