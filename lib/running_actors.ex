@@ -20,7 +20,7 @@ defmodule RunningActors do
     {:reply, state, state}
   end
 
-  def handle_info(event, state) do
+  def handle_info({:event, event}, state) do
     case event do
       %{:ev_type => :actor_started, :module => module, :pid => pid, :ts => ts} ->
         {:noreply, add_running_actor(state, module, pid, ts)}

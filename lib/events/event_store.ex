@@ -61,7 +61,7 @@ defmodule Events.Store do
         Events.actor_stoped(pid, ts)
       e -> e
     end
-    Enum.each(watchers, fn w -> send(w, ev) end)
+    Enum.each(watchers, fn w -> send(w, {:event, ev}) end)
     ev
   end
 
