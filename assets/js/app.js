@@ -53,5 +53,8 @@ function handle_event(e) {
         case "actor_stopped":
             m.actor_stopped(e.pid)
             break
+        case "message_sent":
+            m.message_sent(e.pid, e.to_pid, e.msg)
+            break
     }
 }
