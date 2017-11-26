@@ -26,9 +26,8 @@
         <li data-action = "stop">Stop</li>
       </ul>
       <ul class='background-menu menu'>
-        <li data-action = "show-code">Show code</li>
-        <li data-action = "send-message">Send message</li>
-        <li data-action = "stop">Stop</li>
+        <li data-action = "start-actor">Start actor</li>
+        <li data-action = "new-actor-type">New actor type</li>
       </ul>
       <div id="app"></div>
 

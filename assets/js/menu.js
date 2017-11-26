@@ -13,14 +13,17 @@ $(document).ready(function () {
 
 $(document).bind("mousedown", e => {
 
-    // If the clicked element is not the menu
-    if (!$(e.target).parents(".actor-menu").length > 0) {
-
-        // Hide it
-        $(".actor-menu").hide(100);
-        $(".background-menu").hide(100);
-        MENU_OPENED = false;
+    function close_menu(menu) {
+        if (!$(e.target).parents("." + menu).length > 0) {
+            // Hide it
+            $("." + menu).hide(100);
+            MENU_OPENED = false;
+        }
     }
+
+    // If the clicked element is not the menu
+    close_menu("actor-menu");
+    close_menu("background-menu");
 });
 
 $(".actor-menu li").click(function (e) {
@@ -43,6 +46,25 @@ $(".actor-menu li").click(function (e) {
 
     // Hide it AFTER the action was triggered
     $(".actor-menu").hide(100);
+    MENU_OPENED = false;
+});
+
+$(".background-menu li").click(function (e) {
+
+    // This is the triggered action name
+    switch ($(this).attr("data-action")) {
+
+        // A case for each action. Your actions here
+        case "start-actor":
+            console.log("start actor")
+            break;
+        case "new-actor-type":
+            console.log("new actor type")
+            break;
+    }
+
+    // Hide it AFTER the action was triggered
+    $(".background-menu").hide(100);
     MENU_OPENED = false;
 });
 
