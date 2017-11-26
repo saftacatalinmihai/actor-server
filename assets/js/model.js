@@ -6,11 +6,6 @@ export function init_state() {
     return {"actor_types": [], "numActors": 0, "actors": [], "event_log": []}
 }
 
-export function next_idx() {
-    state["numActors"] = state["numActors"] + 1
-    return state["numActors"]
-}
-
 export function set_actor_types(actor_types) {
     state["actor_types"] = actor_types
 }
@@ -18,14 +13,14 @@ export function set_actor_types(actor_types) {
 export function set_running_actors(running_actors) {
     Object.entries(running_actors).forEach(([module, actors]) => {
         actors.forEach(a => {
-            state["actors"].push({"pid": a.pid, "module": module, "started": a.ts, "idx": next_idx(state) })
+            state["actors"].push({"pid": a.pid, "module": module, "started": a.ts })
         })
     })
     v.render_actors(state["actors"])
 }
 
 export function actor_started(pid, module, ts) {
-    state["actors"].push({"pid": pid, "module": module, "started": ts, "idx": next_idx(state),
+    state["actors"].push({"pid": pid, "module": module, "started": ts,
         "x": v.initX(), "y": v.initY()
     })
     v.render_actors(state["actors"])

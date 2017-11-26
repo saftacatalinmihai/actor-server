@@ -24,9 +24,8 @@ let node = svg.append("g").selectAll(".node")
 export function render_actors(state) {
     console.log("State")
     console.log(state)
-
     //draw circles for the links
-    node = node.data(state)
+    node = node.data(state, d => d['pid'])
 
     // EXIT
     node.exit().remove()
