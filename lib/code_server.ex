@@ -44,6 +44,30 @@ defmodule CodeServer do
     {:ok, %{:actor_types => actor_types}}
   end
 
+  def handle_exceptions(f, state) do
+    try do
+      f.()
+    rescue
+      e in RuntimeError ->
+        IO.inspect e
+        IO.puts("Runtime error")
+        {:reply, {:error, %{:reson => inspect(e)}}, state}
+      e ->
+        IO.inspect e
+        IO.puts("Other error")
+        {:reply, {:error, %{:reson => inspect(e)}}, state}
+    catch
+      e ->
+        IO.inspect e
+        IO.puts("Catch error")
+        {:reply, {:error, %{:reson => inspect(e)}}, state}
+      :exit, e ->
+        IO.inspect e
+        IO.puts("Catch exit")
+        {:reply, {:error, %{:reson => inspect(e)}}, state}
+    end
+  end
+
   def handle_call({:stop, pid_str}, _from, state) do
     pid = :erlang.list_to_pid(to_charlist(pid_str))
     case Process.exit(pid, :stoped_by_user) do
@@ -57,13 +81,13 @@ defmodule CodeServer do
   end
 
   def handle_call({:start_actor, actor_type}, _from, state) do
-    case :"Elixir.#{actor_type}".start do
-      {:ok, pid} ->
-        IO.inspect pid
+    handle_exceptions(
+      fn () ->
+        {:ok, pid} = :"Elixir.#{actor_type}".start
         {:reply, {:ok, %{:name => actor_type, :pid => to_string(:erlang.pid_to_list(pid))}}, state}
-      _ ->
-        {:reply, {:error, %{:reason => "Unable to start actor type: #{actor_type}"}}, state}
-    end
+      end,
+      state
+    )
   end
 
   def handle_call({:new_actor_type, actor_type}, _from, %{:actor_types => actor_types}) do
@@ -114,26 +138,15 @@ defmodule CodeServer do
   end
 
   def handle_call({:send_msg, to_pid, msg}, _from, state) do
-    try do
-      {msg_evaled, _} = Code.eval_string(msg)
-      pid = :erlang.list_to_pid(to_charlist(to_pid))
-      rec = GenServer.call(pid, msg_evaled)
-      {:reply, {:ok, %{:received => rec}}, state}
-    rescue
-      e in RuntimeError ->
-        IO.inspect e
-        IO.puts("Runtime error")
-        {:reply, {:error, %{:reson => inspect(e)}}, state}
-    catch
-      e ->
-        IO.inspect e
-        IO.puts("Catch error")
-        {:reply, {:error, %{:reson => inspect(e)}}, state}
-      :exit, e ->
-        IO.inspect e
-        IO.puts("Catch exit")
-        {:reply, {:error, %{:reson => inspect(e)}}, state}
-    end
+    handle_exceptions(
+      fn () ->
+        {msg_evaled, _} = Code.eval_string(msg)
+        pid = :erlang.list_to_pid(to_charlist(to_pid))
+        rec = GenServer.call(pid, msg_evaled)
+        {:reply, {:ok, %{:received => rec}}, state}
+      end,
+      state
+    );
   end
 
   def handle_call(_msg, _from, state) do

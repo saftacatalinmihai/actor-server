@@ -46,6 +46,17 @@
         </div>
       </div>
 
+      <div id="actor-type-modal" class="modal bottom-sheet">
+        <div class="modal-content">
+            <form id="actor-type-from" class="col s12">
+                <div class="input-field col s12">
+                    <input id="actor-type" type="text" class="validate">
+                    <label for="actor-type">Actor type</label>
+                </div>
+            </form>
+        </div>
+      </div>
+
     </div> <!-- /container -->
     <script src="<%= static_path(@conn, "/js/app.js") %>"></script>
     <!-- Compiled and minified CSS -->

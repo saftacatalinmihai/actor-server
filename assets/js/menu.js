@@ -2,6 +2,7 @@ import $ from "jquery"
 import {send_message} from "./send-message"
 import {show_code} from "./code-editor"
 import {stop_actor} from "./stop-actor";
+import {start_actor} from "./start-actor";
 
 let SELECTED = undefined
 let MENU_OPENED = false
@@ -57,6 +58,7 @@ $(".background-menu li").click(function (e) {
         // A case for each action. Your actions here
         case "start-actor":
             console.log("start actor")
+            start_actor()
             break;
         case "new-actor-type":
             console.log("new actor type")
