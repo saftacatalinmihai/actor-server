@@ -1,7 +1,7 @@
 import $ from "jquery"
-import {sendMessage} from "./send-message"
-import {showCode} from "./code-editor"
-import channel from "./socket"
+import {send_message} from "./send-message"
+import {show_code} from "./code-editor"
+import {stop_actor} from "./stop-actor";
 
 let SELECTED = undefined
 let MENU_OPENED = false
@@ -31,19 +31,13 @@ $(".actor-menu li").click(function (e) {
         // A case for each action. Your actions here
         case "show-code":
             console.log(SELECTED)
-            showCode(SELECTED.module)
+            show_code(SELECTED.module)
             break;
         case "send-message":
-            sendMessage(SELECTED.pid)
+            send_message(SELECTED.pid)
             break;
         case "stop":
-            channel.push("stop_actor", {"pid": SELECTED.pid})
-                .receive("ok", resp => {
-                    console.log("Resp:", resp)
-                })
-                .receive("error", resp => {
-                    console.log("Unable to stop actor: [" + SELECTED.pid + "]. Error: ", resp)
-                })
+            stop_actor(SELECTED.pid);
             break;
     }
 

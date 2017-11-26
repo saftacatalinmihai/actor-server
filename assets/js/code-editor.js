@@ -23,7 +23,7 @@ CodeMirror.commands.save = function(){
         })
 }
 
-export function showCode(module) {
+export function show_code(module) {
     SELECTED_MODULE = module
     channel.push("get_actor_code", {"name": module})
         .receive("ok", resp => {

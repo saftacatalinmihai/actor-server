@@ -3,7 +3,7 @@ import $ from "jquery"
 
 let TO_PID = undefined
 
-export function sendMessage(toPid) {
+export function send_message(toPid) {
     $('#msg-modal').modal('open')
     $("#msg").focus()
     TO_PID = toPid
