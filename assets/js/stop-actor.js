@@ -1,10 +1,10 @@
 import channel from "./socket"
 import {success, error} from "./notifications";
 
-export function stop_actor(pid) {
+export function stop_actor(pid, module) {
     channel.push("stop_actor", {"pid": pid})
         .receive("ok", resp => {
-            success("Actor stopped. PID: " + pid)
+            success(module + " stopped. PID: " + pid)
             console.log("Resp:", resp)
         })
         .receive("error", resp => {

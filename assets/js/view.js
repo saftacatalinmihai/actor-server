@@ -15,7 +15,7 @@ let svg = d3.select("#app").append("svg")
 
 //set up the simulation
 let simulation = d3.forceSimulation()
-    .force("charge_force", d3.forceManyBody().strength(-500))
+    .force("charge_force", d3.forceManyBody().strength(-1000))
     .force("x", d3.forceX(width / 2).strength(0.2))
     .force("y", d3.forceY(height / 2).strength(0.2))
 

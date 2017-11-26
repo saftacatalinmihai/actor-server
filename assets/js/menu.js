@@ -42,7 +42,7 @@ $(".actor-menu li").click(function (e) {
             send_message(SELECTED.pid)
             break;
         case "stop":
-            stop_actor(SELECTED.pid);
+            stop_actor(SELECTED.pid, SELECTED.module);
             break;
     }
 
