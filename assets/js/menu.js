@@ -1,10 +1,11 @@
 import $ from "jquery"
 import {sendMessage} from "./send-message"
 import {showCode} from "./code-editor"
+import channel from "./socket"
 
 let SELECTED = undefined
 
-$(document).ready(function(){
+$(document).ready(function () {
     // the "href" attribute of the modal trigger must specify the modal ID that wants to be triggered
     $('.modal').modal();
 });
@@ -19,7 +20,7 @@ $(document).bind("mousedown", e => {
     }
 });
 
-$(".custom-menu li").click( function (e) {
+$(".custom-menu li").click(function (e) {
 
     // This is the triggered action name
     switch ($(this).attr("data-action")) {
@@ -33,7 +34,13 @@ $(".custom-menu li").click( function (e) {
             sendMessage(SELECTED.pid)
             break;
         case "stop":
-            alert("stop");
+            channel.push("stop_actor", {"pid": SELECTED.pid})
+                .receive("ok", resp => {
+                    console.log("Resp:", resp)
+                })
+                .receive("error", resp => {
+                    console.log("Unable to stop actor: [" + SELECTED.pid + "]. Error: ", resp)
+                })
             break;
     }
 

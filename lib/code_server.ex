@@ -34,9 +34,22 @@ defmodule CodeServer do
     GenServer.call(__MODULE__, {:send_msg, to_pid, msg})
   end
 
+  def stop(pid) do
+    GenServer.call(__MODULE__, {:stop, pid})
+  end
+
   def init(:ok) do
-    actor_types = getActors() |> evalActors
+    actor_types = getActors()
+                  |> evalActors
     {:ok, %{:actor_types => actor_types}}
+  end
+
+  def handle_call({:stop, pid_str}, _from, state) do
+    pid = :erlang.list_to_pid(to_charlist(pid_str))
+    case Process.exit(pid, :stoped_by_user) do
+      true -> {:reply, {:ok, %{:stoped => pid_str}}, state}
+      _ -> {:reply, {:error, %{:not_stoped => pid_str}}, state}
+    end
   end
 
   def handle_call(:get_actor_types, _from, state) do
@@ -132,15 +145,18 @@ defmodule CodeServer do
   end
 
   defp getActors do
-    Path.wildcard("code/*.ex") |>
-      Enum.map(fn file ->
-        String.replace_prefix(file, "code/", "") |>
-          String.replace_suffix(".ex", "")
-      end)
+    Path.wildcard("code/*.ex")
+    |> Enum.map(
+         fn file ->
+           String.replace_prefix(file, "code/", "")
+           |> String.replace_suffix(".ex", "")
+         end
+       )
   end
 
   defp evalActors(actors) do
-    actors |> Enum.map(&evalActor/1)
+    actors
+    |> Enum.map(&evalActor/1)
   end
 
   defp evalActor(type) do
