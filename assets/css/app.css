@@ -50,7 +50,7 @@ text {
     pointer-events: none;
 }
 
-.custom-menu {
+.menu {
     display: none;
     z-index: 1000;
     position: absolute;
@@ -63,11 +63,11 @@ text {
     border-radius: 5px;
 }
 
-.custom-menu li {
+.menu li {
     padding: 8px 12px;
     cursor: pointer;
 }
 
-.custom-menu li:hover {
+.menu li:hover {
     background-color: #DEF;
 }

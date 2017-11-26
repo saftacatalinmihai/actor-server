@@ -11,6 +11,7 @@ let color = d3.scaleOrdinal(d3.schemeCategory20c);
 let svg = d3.select("#app").append("svg")
     .attr("width", width)
     .attr("height", height)
+    .attr("style", "outline: thin solid gray;")   //This will do the job
 
 //set up the simulation
 let simulation = d3.forceSimulation()
@@ -62,6 +63,11 @@ export function render_actors(state) {
     simulation.nodes(state).on("tick", tickActions)
     simulation.restart()
 }
+
+svg.on("contextmenu", function(data, index) {
+    d3.event.preventDefault();
+    menu.show_background_menu(d3.event.pageX, d3.event.pageY);
+});
 
 function tickActions() {
     node.attr("transform", d => {

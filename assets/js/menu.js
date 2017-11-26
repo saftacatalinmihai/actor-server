@@ -4,6 +4,7 @@ import {showCode} from "./code-editor"
 import channel from "./socket"
 
 let SELECTED = undefined
+let MENU_OPENED = false
 
 $(document).ready(function () {
     // the "href" attribute of the modal trigger must specify the modal ID that wants to be triggered
@@ -13,14 +14,16 @@ $(document).ready(function () {
 $(document).bind("mousedown", e => {
 
     // If the clicked element is not the menu
-    if (!$(e.target).parents(".custom-menu").length > 0) {
+    if (!$(e.target).parents(".actor-menu").length > 0) {
 
         // Hide it
-        $(".custom-menu").hide(100);
+        $(".actor-menu").hide(100);
+        $(".background-menu").hide(100);
+        MENU_OPENED = false;
     }
 });
 
-$(".custom-menu li").click(function (e) {
+$(".actor-menu li").click(function (e) {
 
     // This is the triggered action name
     switch ($(this).attr("data-action")) {
@@ -45,16 +48,31 @@ $(".custom-menu li").click(function (e) {
     }
 
     // Hide it AFTER the action was triggered
-    $(".custom-menu").hide(100);
+    $(".actor-menu").hide(100);
+    MENU_OPENED = false;
 });
 
-export function show(x, y, d) {
-
-    // Show contextmenu
-    $(".custom-menu").finish().toggle(100).// In the right position (the mouse)
+function open_menu(menu, x, y) {
+    $("." + menu).finish().toggle(100).// In the right position (the mouse)
     css({
         top: y + "px",
         left: x + "px"
     })
+}
+
+export function show(x, y, d) {
+    console.log("Element context menu")
+    MENU_OPENED = true;
+    // Show contextmenu
+    open_menu("actor-menu", x, y);
     SELECTED = d
+}
+
+export function show_background_menu(x, y) {
+    if (!MENU_OPENED) {
+        console.log("Background Menu opened : " + x + " " + y)
+        open_menu("background-menu", x, y)
+    } else {
+        $(".background-menu").hide(100);
+    }
 }
