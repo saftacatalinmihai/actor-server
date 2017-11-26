@@ -1,5 +1,6 @@
 import channel from "./socket"
 import $ from "jquery"
+import {success, error} from "./notifications";
 
 let TO_PID = undefined
 
@@ -16,9 +17,12 @@ $("#msg-from").submit(event => {
     let msg = $("#msg").val()
     channel.push("send_msg", {"to": TO_PID, "msg": "\"" + msg + "\""})
         .receive("ok", resp => {
+            success(resp['received'])
             console.log("Resp:", resp)
         })
         .receive("error", resp => {
-            console.log("Unable to send message: [" + msg + "] to actor: [" + TO_PID + "]. Error: ", resp)
+            let message = "Unable to send message: [" + msg + "] to actor: [" + TO_PID + "]"
+            error(message)
+            console.log(console.log(message + ". Error: ", resp))
         })
 })

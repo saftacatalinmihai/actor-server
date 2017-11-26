@@ -31,7 +31,15 @@ defmodule {{actor_name}} do
     {:reply, "pong", state}
   end
 
+  def handle_call(_, _from, state) do
+    {:reply, "?", state}
+  end
+
   def handle_cast("ping", state) do
+    {:noreply, state}
+  end
+
+  def handle_cast(_, state) do
     {:noreply, state}
   end
 

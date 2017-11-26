@@ -1,5 +1,6 @@
 import channel from "./socket"
 import $ from "jquery"
+import {success, error} from "./notifications";
 
 export function start_actor() {
     $('#actor-type-modal').modal('open')
@@ -14,9 +15,11 @@ $("#actor-type-modal").submit(event => {
     if (actor_type.length > 0) {
         channel.push("start_actor", {"type": actor_type})
             .receive("ok", resp => {
+                success("Actor started. PID: " + resp['pid'])
                 console.log("Resp:", resp)
             })
             .receive("error", resp => {
+                error("Unable to start actor")
                 console.log("Unable to start actor type: [" + actor_type + "]. Error: ", resp)
             })
     } else {
