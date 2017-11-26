@@ -6,7 +6,7 @@ let margin = {top: -5, right: -5, bottom: -5, left: -5}
 let width = 960 - margin.left - margin.right
 let height = 500 - margin.top - margin.bottom
 let radius = 20
-let color = d3.scaleOrdinal(d3.schemeCategory20c);
+let color = d3.scaleOrdinal(d3.schemeCategory10);
 
 let svg = d3.select("#app").append("svg")
     .attr("width", width)

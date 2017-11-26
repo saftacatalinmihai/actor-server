@@ -4,13 +4,13 @@ import {success, error} from "./notifications";
 
 let ACTIVE = false
 
-export function start_actor() {
+export function new_actor_type() {
     $('#actor-type-modal').modal('open')
     $("#actor-type").focus()
-    ACTIVE = true
+    ACTIVE = true;
 }
 
-// The same modal is used in new-actor-type
+// The same modal is used in start-actor
 $("#actor-type-modal").submit(event => {
     if (ACTIVE) {
         $('#actor-type-modal').modal('close')
@@ -18,13 +18,13 @@ $("#actor-type-modal").submit(event => {
         event.preventDefault()
         let actor_type = $("#actor-type").val()
         if (actor_type.length > 0) {
-            channel.push("start_actor", {"type": actor_type})
+            channel.push("new_actor", {"name": actor_type})
                 .receive("ok", resp => {
-                    success("Actor started. PID: " + resp['pid'])
+                    success("Actor created")
                     console.log("Resp:", resp)
                 })
                 .receive("error", resp => {
-                    error("Unable to start actor")
+                    error("Unable to create new actor")
                     console.log("Unable to start actor type: [" + actor_type + "]. Error: ", resp)
                 })
         } else {

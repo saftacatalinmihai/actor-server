@@ -26,7 +26,7 @@ defmodule TestActor do
   def init(:ok) do
     {:ok, %{}}
   end
-
+  
   def handle_call("ping", _from, state) do
     {:reply, "pong", state}
   end
