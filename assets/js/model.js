@@ -1,6 +1,6 @@
 import * as v from "./view"
 
-let state = init_state()
+let state = init_state();
 
 export function init_state() {
     return {"actor_types": [], "numActors": 0, "actors": [], "event_log": [], "messages": []}
@@ -27,43 +27,60 @@ export function set_running_actors(running_actors) {
         actors.forEach(a => {
             state["actors"].push({"pid": a.pid, "module": module, "started": a.ts })
         })
-    })
+    });
     v.render_actors(state["actors"])
 }
 
 export function actor_started(pid, module, ts) {
     state["actors"].push({"pid": pid, "module": module, "started": ts,
         "x": v.initX(), "y": v.initY()
-    })
+    });
     v.render_actors(state["actors"])
 }
 
 export function actor_stopped(pid) {
     state["actors"] = state["actors"].filter(a => {
         return a.pid !== pid
-    })
+    });
     v.render_actors(state["actors"])
 }
 
 export function push_event(ev) {
-    state["event_log"].push(ev)
+    state["event_log"].push(ev);
     v.render_events(state["event_log"])
 }
 
 export function message_sent(from, to, msg) {
-    let messages = state['messages']
-    if (from in actor_pids(state)) {
-        let messages_from
+    let messages = state['messages'];
+
+    if (actor_pids(state).indexOf(from) >= 0) {
+        let messages_from;
         if (from in messages) {
             messages_from = messages[from]
         } else {
-            messages[from] = {}
+            messages[from] = {};
             messages_from = messages[from]
         }
         messages_from[to] = msg
     }
-    console.log(state)
+    state['messages'] = messages
+    // v.render_links(messages_to_links(state["messages"]))
 }
+
+const concat = (x,y) =>
+    x.concat(y);
+
+const flatMap = (f,xs) =>
+    xs.map(f).reduce(concat, []);
+
+function messages_to_links(messages){
+    return flatMap(from => {
+        return Object.keys(messages[from]).map(to => {
+            return {source: from, target: to, msg: messages[from][to]}
+        })
+    }, Object.keys(messages))
+}
+
 
 function actor_pids(state) {
     return state['actors'].map(a => a.pid)

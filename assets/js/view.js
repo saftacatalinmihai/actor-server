@@ -2,33 +2,35 @@ import * as d3 from "d3"
 import * as menu from "./menu"
 
 // Running actors:
-let margin = {top: -5, right: -5, bottom: -5, left: -5}
-let width = 960 - margin.left - margin.right
-let height = 500 - margin.top - margin.bottom
-let radius = 20
+let margin = {top: -5, right: -5, bottom: -5, left: -5};
+let width = 960 - margin.left - margin.right;
+let height = 500 - margin.top - margin.bottom;
+let radius = 20;
 let color = d3.scaleOrdinal(d3.schemeCategory10);
 
 let svg = d3.select("#app").append("svg")
     .attr("width", width)
     .attr("height", height)
-    .attr("style", "outline: thin solid gray;")   //This will do the job
+    .attr("style", "outline: thin solid gray;");   //This will do the job
+
+let node = svg.append("g").selectAll(".node");
+let link = svg.append("g").selectAll(".line");
 
 //set up the simulation
 let simulation = d3.forceSimulation()
     .force("charge_force", d3.forceManyBody().strength(-1000))
+    .force("link", d3.forceLink([]).distance(200))
     .force("x", d3.forceX(width / 2).strength(0.2))
-    .force("y", d3.forceY(height / 2).strength(0.2))
-
-let node = svg.append("g").selectAll(".node")
+    .force("y", d3.forceY(height / 2).strength(0.2));
 
 export function render_actors(state) {
-    console.log("State")
-    console.log(state)
+    console.log("State");
+    console.log(state);
     //draw circles for the links
-    node = node.data(state, d => d['pid'])
+    node = node.data(state, d => d['pid']);
 
     // EXIT
-    node.exit().remove()
+    node.exit().remove();
 
     // NEW + Update
     let new_node = node.enter()
@@ -43,23 +45,23 @@ export function render_actors(state) {
 
             // Show contextmenu
             menu.show(d3.event.pageX, d3.event.pageY, node)
-        })
+        });
 
     new_node.append("circle")
         .attr("r", radius)
-        .attr("fill", d => color(d.module))
+        .attr("fill", d => color(d.module));
 
     new_node.append("title")
-        .text(d => "module: " + d.module + "\n" + "pid: " + d.pid)
+        .text(d => "module: " + d.module + "\n" + "pid: " + d.pid);
 
     new_node.append("text")
         .attr("dx", 12)
         .attr("dy", ".35em")
-        .text(d => d.pid)
+        .text(d => d.pid);
 
-    node = node.merge(new_node)
+    node = node.merge(new_node);
 
-    simulation.nodes(state).on("tick", tickActions)
+    simulation.nodes(state).on("tick", tickActions);
     simulation.restart()
 }
 
@@ -73,7 +75,13 @@ function tickActions() {
         return "translate(" +
             Math.max(radius, Math.min(width - radius, d.x)) + "," +
             Math.max(radius, Math.min(height - radius, d.y)) + ")"
-    })
+    });
+
+    link
+        .attr("x1", function(d) { return d.source.x; })
+        .attr("y1", function(d) { return d.source.y; })
+        .attr("x2", function(d) { return d.target.x; })
+        .attr("y2", function(d) { return d.target.y; });
 }
 
 function drag_start(d) {
@@ -93,8 +101,17 @@ function drag_end(d) {
     d.fy = null;
 }
 
+export function render_links(state) {
+    link = link.data(state, function(d) { return d.source.id + "-" + d.target.id; });
+    link.exit().remove();
+    link = link.enter().append("line").merge(link);
+
+    simulation.force("link").links(state);
+    simulation.restart();
+}
+
 // Event log:
-let events = d3.select("#app").append("div")
+let events = d3.select("#app").append("div");
 
 export function render_events(state) {
     events.selectAll("p")
