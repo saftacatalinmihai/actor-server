@@ -10,6 +10,18 @@ export function set_actor_types(actor_types) {
     state["actor_types"] = actor_types
 }
 
+// Polyfill
+if (!Object.entries)
+    Object.entries = function( obj ){
+        var ownProps = Object.keys( obj ),
+            i = ownProps.length,
+            resArray = new Array(i); // preallocate the Array
+        while (i--)
+            resArray[i] = [ownProps[i], obj[ownProps[i]]];
+
+        return resArray;
+    };
+
 export function set_running_actors(running_actors) {
     Object.entries(running_actors).forEach(([module, actors]) => {
         actors.forEach(a => {

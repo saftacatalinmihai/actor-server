@@ -61,6 +61,10 @@ defmodule ActorServerWeb.RoomChannel do
     {:reply, CodeServer.get_actor_code(name), socket}
   end
 
+  def handle_in("get_events", _attrs, socket) do
+    {:reply, {:ok, %{:events => Events.Store.get_events()}}, socket}
+  end
+
   def handle_in("send_msg", %{"to" => pid, "msg" => msg}, socket) do
     IO.puts "send msg"
     IO.inspect pid

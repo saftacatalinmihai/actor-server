@@ -20,6 +20,7 @@ import "phoenix_html"
 
 import channel from "./socket"
 import * as m from "./model"
+import * as ev from "./event-handler"
 
 channel.push("get_actors")
     .receive("ok", resp => {
@@ -39,22 +40,13 @@ channel.push("get_running_actors")
         console.log("Unable to get running actors", resp)
     })
 
-channel.on("event", handle_event)
+channel.push("get_events")
+    .receive("ok", resp => {
+        console.log("Got events:", resp)
+        resp.events.forEach(e => m.push_event(ev.fix_event_ts(e)))
+    })
+    .receive("error", resp => {
+        console.log("Unable to get events", resp)
+    })
 
-function handle_event(e) {
-    e.ts = new Date(parseInt(e.ts))
-    console.log(e)
-    m.push_event(e)
-
-    switch (e.ev_type) {
-        case "actor_started":
-            m.actor_started(e.pid, e.module, e.ts)
-            break
-        case "actor_stopped":
-            m.actor_stopped(e.pid)
-            break
-        case "message_sent":
-            m.message_sent(e.pid, e.to_pid, e.msg)
-            break
-    }
-}
+channel.on("event", ev.handle_event)
