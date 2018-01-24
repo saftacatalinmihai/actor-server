@@ -28,7 +28,7 @@ export function set_running_actors(running_actors) {
             state["actors"].push({"pid": a.pid, "module": module, "started": a.ts})
         })
     });
-    v.render_actors(state["actors"])
+    v.render(state)
 }
 
 export function actor_started(pid, module, ts) {
@@ -36,14 +36,14 @@ export function actor_started(pid, module, ts) {
         "pid": pid, "module": module, "started": ts,
         "x": v.initX(), "y": v.initY()
     });
-    v.render_actors(state["actors"])
+    v.render(state)
 }
 
 export function actor_stopped(pid) {
     state["actors"] = state["actors"].filter(a => {
         return a.pid !== pid
     });
-    v.render_actors(state["actors"])
+    v.render(state)
 }
 
 export function push_event(ev) {
@@ -66,21 +66,7 @@ export function message_sent(from, to, msg) {
         messages_from[to] = msg
     }
     state['messages'] = messages
-    v.render_links(messages_to_links(state['messages']))
-}
-
-const concat = (x, y) =>
-    x.concat(y);
-
-const flatMap = (f, xs) =>
-    xs.map(f).reduce(concat, []);
-
-function messages_to_links(messages) {
-    return flatMap(from => {
-        return Object.keys(messages[from]).map(to => {
-            return {source: from, target: to, msg: messages[from][to]}
-        })
-    }, Object.keys(messages))
+    v.render(state)
 }
 
 

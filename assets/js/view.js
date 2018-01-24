@@ -19,15 +19,25 @@ let link = svg.append("g").selectAll(".line");
 //set up the simulation
 let simulation = d3.forceSimulation()
     .force("charge_force", d3.forceManyBody().strength(-1000))
-    .force("link", d3.forceLink().id(d => d.pid).distance(40))
+    .force("link", d3.forceLink().id(d => d.pid).distance(100))
     .force("x", d3.forceX(width / 2).strength(0.2))
     .force("y", d3.forceY(height / 2).strength(0.2));
 
-export function render_actors(state) {
+export function render(state) {
     console.log("State");
     console.log(state);
+    let link_data = messages_to_links(state['messages']);
+
+    simulation.nodes(state['actors']).on("tick", tickActions);
+    simulation.force("link").links(link_data);
+
+    link = link.data(link_data);
+    link.exit().remove();
+
+    link = link.enter().append("line").attr("class", "link").merge(link);
+
     //draw circles for the links
-    node = node.data(state, d => d['pid']);
+    node = node.data(state['actors'], d => d['pid']);
 
     // EXIT
     node.exit().remove();
@@ -61,7 +71,6 @@ export function render_actors(state) {
 
     node = node.merge(new_node);
 
-    simulation.nodes(state).on("tick", tickActions);
     simulation.restart()
 }
 
@@ -100,15 +109,6 @@ function drag_end(d) {
     d.fy = null;
 }
 
-export function render_links(state) {
-    link = link.data(state);
-    link.exit().remove();
-    link = link.enter().append("line").attr("class", "link").merge(link);
-
-    simulation.force("link").links(state);
-    simulation.restart();
-}
-
 // Event log:
 let events = d3.select("#app").append("div");
 
@@ -126,4 +126,18 @@ export function initX() {
 
 export function initY() {
     return height / 2
+}
+
+const concat = (x, y) =>
+    x.concat(y);
+
+const flatMap = (f, xs) =>
+    xs.map(f).reduce(concat, []);
+
+function messages_to_links(messages) {
+    return flatMap(from => {
+        return Object.keys(messages[from]).map(to => {
+            return {source: from, target: to, msg: messages[from][to]}
+        })
+    }, Object.keys(messages))
 }
