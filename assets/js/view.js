@@ -63,7 +63,18 @@ function render_links(state) {
 
     link = link.data(state);
     link.exit().remove();
-    link = link.enter().append("line").attr("class", "link").merge(link);
+
+    let new_link = link.enter().append("line").attr("class", "link")
+
+    new_link.append("title")
+        .text(d => d.msg);
+
+    new_link.append("text")
+        .attr("dx", 12)
+        .attr("dy", ".35em")
+        .text(d => d.msg);
+
+    link = link.merge(new_link);
 }
 
 export function render(state) {

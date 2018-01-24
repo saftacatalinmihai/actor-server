@@ -14,7 +14,7 @@ svg:not(.active):not(.ctrl) {
 
 .link {
     stroke: #21209d;
-    stroke-width: 1.5px;
+    stroke-width: 3.5px;
 }
 
 svg:not(.active):not(.ctrl) path.link {
