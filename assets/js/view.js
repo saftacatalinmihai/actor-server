@@ -23,23 +23,9 @@ let simulation = d3.forceSimulation()
     .force("x", d3.forceX(width / 2).strength(0.2))
     .force("y", d3.forceY(height / 2).strength(0.2));
 
-export function render(state) {
-    console.log("State");
-    console.log(state);
-    let link_data = messages_to_links(state['messages']);
-
-    simulation.nodes(state['actors']).on("tick", tickActions);
-    simulation.force("link").links(link_data);
-
-    link = link.data(link_data);
-    link.exit().remove();
-
-    link = link.enter().append("line").attr("class", "link").merge(link);
-
-    //draw circles for the links
-    node = node.data(state['actors'], d => d['pid']);
-
-    // EXIT
+function render_nodes(state) {
+    simulation.nodes(state).on("tick", tickActions);
+    node = node.data(state, d => d['pid']);
     node.exit().remove();
 
     // NEW + Update
@@ -70,6 +56,22 @@ export function render(state) {
         .text(d => d.pid);
 
     node = node.merge(new_node);
+}
+
+function render_links(state) {
+    simulation.force("link").links(state);
+
+    link = link.data(state);
+    link.exit().remove();
+    link = link.enter().append("line").attr("class", "link").merge(link);
+}
+
+export function render(state) {
+    console.log("State");
+    console.log(state);
+
+    render_links(messages_to_links(state['messages']));
+    render_nodes(state['actors']);
 
     simulation.restart()
 }
