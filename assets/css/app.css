@@ -12,11 +12,9 @@ svg:not(.active):not(.ctrl) {
     cursor: crosshair;
 }
 
-path.link {
-    fill: none;
-    stroke: #000;
-    stroke-width: 4px;
-    cursor: default;
+.link {
+    stroke: #21209d;
+    stroke-width: 1.5px;
 }
 
 svg:not(.active):not(.ctrl) path.link {

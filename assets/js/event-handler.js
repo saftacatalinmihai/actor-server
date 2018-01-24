@@ -2,7 +2,6 @@ import * as m from "./model";
 
 export function handle_event(e) {
     e = fix_event_ts(e)
-    console.log(e)
     m.push_event(e)
 
     switch (e.ev_type) {
@@ -18,7 +17,7 @@ export function handle_event(e) {
     }
 }
 
-export function fix_event_ts(e){
+export function fix_event_ts(e) {
     e.ts = new Date(parseInt(e.ts))
     return e
 }

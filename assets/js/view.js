@@ -19,7 +19,7 @@ let link = svg.append("g").selectAll(".line");
 //set up the simulation
 let simulation = d3.forceSimulation()
     .force("charge_force", d3.forceManyBody().strength(-1000))
-    .force("link", d3.forceLink([]).distance(200))
+    .force("link", d3.forceLink().id(d => d.pid).distance(40))
     .force("x", d3.forceX(width / 2).strength(0.2))
     .force("y", d3.forceY(height / 2).strength(0.2));
 
@@ -65,7 +65,7 @@ export function render_actors(state) {
     simulation.restart()
 }
 
-svg.on("contextmenu", function(data, index) {
+svg.on("contextmenu", function (data, index) {
     d3.event.preventDefault();
     menu.show_background_menu(d3.event.pageX, d3.event.pageY);
 });
@@ -77,11 +77,10 @@ function tickActions() {
             Math.max(radius, Math.min(height - radius, d.y)) + ")"
     });
 
-    link
-        .attr("x1", function(d) { return d.source.x; })
-        .attr("y1", function(d) { return d.source.y; })
-        .attr("x2", function(d) { return d.target.x; })
-        .attr("y2", function(d) { return d.target.y; });
+    link.attr("x1", d => d.source.x)
+        .attr("y1", d => d.source.y)
+        .attr("x2", d => d.target.x)
+        .attr("y2", d => d.target.y);
 }
 
 function drag_start(d) {
@@ -102,9 +101,9 @@ function drag_end(d) {
 }
 
 export function render_links(state) {
-    link = link.data(state, function(d) { return d.source.id + "-" + d.target.id; });
+    link = link.data(state);
     link.exit().remove();
-    link = link.enter().append("line").merge(link);
+    link = link.enter().append("line").attr("class", "link").merge(link);
 
     simulation.force("link").links(state);
     simulation.restart();
@@ -121,5 +120,10 @@ export function render_events(state) {
         .html(e => JSON.stringify(e))
 }
 
-export function initX(){ return width / 2}
-export function initY(){ return height / 2}
+export function initX() {
+    return width / 2
+}
+
+export function initY() {
+    return height / 2
+}

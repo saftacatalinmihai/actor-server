@@ -30,6 +30,12 @@ defmodule TestActor do
   def handle_call("ping", _from, state) do
     {:reply, "pong", state}
   end
+  
+  def handle_call("t", _from, state) do
+    pid = :erlang.list_to_pid(to_charlist("<0.502.0>"))
+  	GenServer.call(pid, "ping")
+    {:reply, "ok", state}
+  end
 
   def handle_call(_, _from, state) do
     {:reply, "?", state}

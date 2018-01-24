@@ -12,8 +12,8 @@ export function set_actor_types(actor_types) {
 
 // Polyfill
 if (!Object.entries)
-    Object.entries = function( obj ){
-        var ownProps = Object.keys( obj ),
+    Object.entries = function (obj) {
+        var ownProps = Object.keys(obj),
             i = ownProps.length,
             resArray = new Array(i); // preallocate the Array
         while (i--)
@@ -25,14 +25,15 @@ if (!Object.entries)
 export function set_running_actors(running_actors) {
     Object.entries(running_actors).forEach(([module, actors]) => {
         actors.forEach(a => {
-            state["actors"].push({"pid": a.pid, "module": module, "started": a.ts })
+            state["actors"].push({"pid": a.pid, "module": module, "started": a.ts})
         })
     });
     v.render_actors(state["actors"])
 }
 
 export function actor_started(pid, module, ts) {
-    state["actors"].push({"pid": pid, "module": module, "started": ts,
+    state["actors"].push({
+        "pid": pid, "module": module, "started": ts,
         "x": v.initX(), "y": v.initY()
     });
     v.render_actors(state["actors"])
@@ -53,9 +54,10 @@ export function push_event(ev) {
 export function message_sent(from, to, msg) {
     let messages = state['messages'];
 
-    if (actor_pids(state).indexOf(from) >= 0) {
+    let actorPids = actor_pids(state);
+    if (actorPids.indexOf(from) >= 0 && actorPids.indexOf(to) >= 0) {
         let messages_from;
-        if (from in messages) {
+        if (messages.indexOf(from) >= 0) {
             messages_from = messages[from]
         } else {
             messages[from] = {};
@@ -64,16 +66,16 @@ export function message_sent(from, to, msg) {
         messages_from[to] = msg
     }
     state['messages'] = messages
-    // v.render_links(messages_to_links(state["messages"]))
+    v.render_links(messages_to_links(state['messages']))
 }
 
-const concat = (x,y) =>
+const concat = (x, y) =>
     x.concat(y);
 
-const flatMap = (f,xs) =>
+const flatMap = (f, xs) =>
     xs.map(f).reduce(concat, []);
 
-function messages_to_links(messages){
+function messages_to_links(messages) {
     return flatMap(from => {
         return Object.keys(messages[from]).map(to => {
             return {source: from, target: to, msg: messages[from][to]}
