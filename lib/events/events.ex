@@ -16,8 +16,8 @@ defmodule Events do
     %{:ev_type => :message_received, :pid => PidFormatter.format_pid(pid), :msg => inspect(msg, pretty: true), :ts => timestamp_to_millis(ts)}
   end
 
-  def actor_stoped(pid, ts) do
-    %{:ev_type => :actor_stopped, :pid => PidFormatter.format_pid(pid), :ts => timestamp_to_millis(ts)}
+  def actor_stoped(pid, ts, reason) do
+    %{:ev_type => :actor_stopped, :pid => PidFormatter.format_pid(pid), :ts => timestamp_to_millis(ts), :reason => inspect(reason, pretty: true)}
   end
 
   defp timestamp_to_millis(ts) do

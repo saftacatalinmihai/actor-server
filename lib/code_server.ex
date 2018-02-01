@@ -84,6 +84,7 @@ defmodule CodeServer do
     handle_exceptions(
       fn () ->
         {:ok, pid} = :"Elixir.#{actor_type}".start
+        Process.monitor(pid)
         {:reply, {:ok, %{:name => actor_type, :pid => to_string(:erlang.pid_to_list(pid))}}, state}
       end,
       state
@@ -126,17 +127,6 @@ defmodule CodeServer do
     reload_code(actor_type, state)
   end
 
-  defp reload_code(actor_type, state) do
-    try do
-      IO.inspect Code.eval_file("code/#{actor_type}.ex")
-      {:reply, {:ok, %{:name => actor_type}}, state}
-    rescue
-      e ->
-        IO.inspect e
-        {:reply, {:error, %{:reson => e}}, state}
-    end
-  end
-
   def handle_call({:send_msg, to_pid, msg}, _from, state) do
     handle_exceptions(
       fn () ->
@@ -155,6 +145,22 @@ defmodule CodeServer do
 
   def handle_cast(_msg, state) do
     {:noreply, state}
+  end
+
+  def handle_info({:DOWN, _ref, :process, pid, reason}, state) do
+    Events.Store.new_event(Events.actor_stoped(pid, :os.timestamp(), reason))
+    {:noreply, state}
+  end
+
+  defp reload_code(actor_type, state) do
+    try do
+      IO.inspect Code.eval_file("code/#{actor_type}.ex")
+      {:reply, {:ok, %{:name => actor_type}}, state}
+    rescue
+      e ->
+        IO.inspect e
+        {:reply, {:error, %{:reson => e}}, state}
+    end
   end
 
   defp getActors do

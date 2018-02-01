@@ -10,7 +10,7 @@ defmodule ActorTracer do
   defmacro trace(pid) do
     quote do
       Events.Store.new_event(Events.actor_started(__MODULE__, unquote(pid)))
-      :erlang.trace(unquote(pid), true, [:send, :receive, :exiting, :timestamp, {:tracer, ActorTracer.get_pid()}])
+      :erlang.trace(unquote(pid), true, [:send, :receive, :timestamp, {:tracer, ActorTracer.get_pid()}])
     end
   end
 

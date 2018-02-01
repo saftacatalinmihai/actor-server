@@ -55,10 +55,6 @@ defmodule Events.Store do
         Events.send_msg_event(pid, to_pid, msg, ts)
       {:trace_ts, pid, :receive, msg, ts} ->
         Events.receive_msg_event(pid, msg, ts)
-      {:trace_ts, pid, :out_exited, _mfa, ts} ->
-        Events.actor_stoped(pid, ts)
-      {:trace_ts, pid, :in_exiting, _mfa, ts} ->
-        Events.actor_stoped(pid, ts)
       e -> e
     end
     Enum.each(watchers, fn w -> send(w, {:event, ev}) end)
