@@ -7,9 +7,14 @@ defmodule ActorTracer do
     GenServer.call(__MODULE__, :get_pid)
   end
 
+  def monitor(pid) do
+    GenServer.call(__MODULE__, {:monitor, pid})
+  end
+
   defmacro trace(pid) do
     quote do
       Events.Store.new_event(Events.actor_started(__MODULE__, unquote(pid)))
+      ActorTracer.monitor(unquote(pid))
       :erlang.trace(unquote(pid), true, [:send, :receive, :timestamp, {:tracer, ActorTracer.get_pid()}])
     end
   end
@@ -20,6 +25,16 @@ defmodule ActorTracer do
 
   def handle_call(:get_pid, _from, state) do
     {:reply, self(), state}
+  end
+
+  def handle_call({:monitor, pid}, _from, state) do
+    Process.monitor(pid)
+    {:reply, self(), state}
+  end
+
+  def handle_info({:DOWN, _ref, :process, pid, reason}, state) do
+    Events.Store.new_event(Events.actor_stoped(pid, :os.timestamp(), reason))
+    {:noreply, state}
   end
 
   def handle_info(event, state) do

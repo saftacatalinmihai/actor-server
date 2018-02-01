@@ -84,7 +84,6 @@ defmodule CodeServer do
     handle_exceptions(
       fn () ->
         {:ok, pid} = :"Elixir.#{actor_type}".start
-        Process.monitor(pid)
         {:reply, {:ok, %{:name => actor_type, :pid => to_string(:erlang.pid_to_list(pid))}}, state}
       end,
       state
@@ -144,11 +143,6 @@ defmodule CodeServer do
   end
 
   def handle_cast(_msg, state) do
-    {:noreply, state}
-  end
-
-  def handle_info({:DOWN, _ref, :process, pid, reason}, state) do
-    Events.Store.new_event(Events.actor_stoped(pid, :os.timestamp(), reason))
     {:noreply, state}
   end
 
