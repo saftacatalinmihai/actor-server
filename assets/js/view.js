@@ -123,12 +123,13 @@ function drag_end(d) {
 }
 
 // Event log:
-let events = d3.select("#app").append("div");
+let events = d3.select("#app").append("ul").attr("class", "collection");
 
 export function render_events(state) {
-    events.selectAll("p")
+    events.selectAll("li")
         .data(state)
-        .enter().append("p")
+        .enter().append("li")
+        .attr("class", "collection-item")
         .attr("style", "white-space: nowrap;")
         .html(e => JSON.stringify(e))
 }
