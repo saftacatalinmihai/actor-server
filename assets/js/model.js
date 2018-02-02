@@ -13,7 +13,7 @@ export function set_actor_types(actor_types) {
 // Polyfill
 if (!Object.entries)
     Object.entries = function (obj) {
-        var ownProps = Object.keys(obj),
+        let ownProps = Object.keys(obj),
             i = ownProps.length,
             resArray = new Array(i); // preallocate the Array
         while (i--)
@@ -43,6 +43,7 @@ export function actor_stopped(pid) {
     state["actors"] = state["actors"].filter(a => {
         return a.pid !== pid
     });
+    remove_links_to_pid(pid);
     v.render(state)
 }
 
@@ -51,6 +52,7 @@ export function push_event(ev) {
     v.render_events(state["event_log"])
 }
 
+// Type: {messages: {<from_pid>: {<to_pid>: <msg>}}}
 export function message_sent(from, to, msg) {
     let messages = state['messages'];
 
@@ -65,11 +67,19 @@ export function message_sent(from, to, msg) {
         }
         messages_from[to] = msg
     }
-    state['messages'] = messages
+    state['messages'] = messages;
     v.render(state)
 }
 
-
 function actor_pids(state) {
     return state['actors'].map(a => a.pid)
+}
+
+function remove_links_to_pid(pid) {
+    delete state["messages"][pid];
+    for (let from_pid in state["messages"]) {
+        if (state["messages"].hasOwnProperty(from_pid)) {
+            delete state["messages"][from_pid][pid]
+        }
+    }
 }
