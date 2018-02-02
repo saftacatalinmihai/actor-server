@@ -31,7 +31,7 @@ defmodule Relay do
     {:reply, "pong", state}
   end
   
-  def handle_call({"relay", pid, msg}, _from, state) do
+  def handle_call({:relay, pid, msg}, _from, state) do
     pid = :erlang.list_to_pid(to_charlist("<0.#{pid}.0>"))
   	{:reply, GenServer.call(pid, msg), state}
   end
